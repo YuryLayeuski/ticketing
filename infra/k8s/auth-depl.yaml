@@ -14,7 +14,15 @@ spec:
     spec:
       containers:
         - name: auth
-          image: us-docker.pkg.dev/ticketing-dev-439503/auth:latest
+          image: yurkapur/auth
+          env:
+            - name: MONGO_URI
+              value: 'mongodb://auth-mongo-srv:27017/auth'
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service
@@ -28,3 +36,37 @@ spec:
       protocol: TCP
       port: 3000
       targetPort: 3000
+
+
+
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: auth-depl
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: auth
+#  template:
+#    metadata:
+#      labels:
+#        app: auth
+#    spec:
+#      containers:
+#        - name: auth
+#          image: us.gcr.io/ticketing-dev-439503/auth:4385d82
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: auth-srv
+#spec:
+#  selector:
+#    app: auth
+#  ports:
+#    - name: auth
+#      protocol: TCP
+#      port: 3000
+#      targetPort: 3000
+#
